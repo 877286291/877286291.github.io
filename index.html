@@ -306,8 +306,8 @@
 </ul>
 <h2 id="3-修改nginx默认html页面（方便查看主备切换）"><a href="#3-修改nginx默认html页面（方便查看主备切换）" class="headerlink" title="3.修改nginx默认html页面（方便查看主备切换）"></a>3.修改nginx默认html页面（方便查看主备切换）</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/share/nginx/html</span><br><span class="line">vim index.html</span><br></pre></td></tr></table></figure>
 
-<p><img src="/Users/houyuji/blog/source/_posts/1269262184-c2b126fd67ce895d_fix732.png" alt="1269262184-c2b126fd67ce895d_fix732"></p>
-<p><img src="/Users/houyuji/blog/source/_posts/825873155-98546f3f4735f425_fix732.png" alt="825873155-98546f3f4735f425_fix732"></p>
+<p><img src="/../../images/1269262184-c2b126fd67ce895d_fix732-8097399.png" alt="1269262184-c2b126fd67ce895d_fix732"></p>
+<p><img src="/../../images/825873155-98546f3f4735f425_fix732-8097416.png" alt="825873155-98546f3f4735f425_fix732"></p>
 <h2 id="4-创建nginx进程检测脚本"><a href="#4-创建nginx进程检测脚本" class="headerlink" title="4.创建nginx进程检测脚本"></a>4.创建nginx进程检测脚本</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/keepalived</span><br><span class="line">touch check_nginx.sh</span><br><span class="line">chmod +x check_nginx.sh</span><br><span class="line">vim check_nginx.sh</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">A=`ps -C nginx --no-header | wc -l`</span><br><span class="line">if [ $A -eq 0 ];then</span><br><span class="line">    /usr/sbin/nginx</span><br><span class="line">    sleep 2</span><br><span class="line">    if [ `ps -C nginx --no-header | wc -l` -eq 0 ];then</span><br><span class="line">        killall keepalived</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
@@ -332,17 +332,17 @@
 </blockquote>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip a</span><br></pre></td></tr></table></figure>
 
-<p><img src="/Users/houyuji/blog/source/_posts/2072617212-fbf4b38345f1e8fd_fix732.png" alt="2072617212-fbf4b38345f1e8fd_fix732"></p>
+<p><img src="/../../images/2072617212-fbf4b38345f1e8fd_fix732-8097504.png" alt="2072617212-fbf4b38345f1e8fd_fix732"></p>
 <blockquote>
 <p>使用webtest容器作为客户端访问nginx服务</p>
 </blockquote>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 172.17.0.200</span><br></pre></td></tr></table></figure>
 
-<p><img src="/Users/houyuji/blog/source/_posts/2228696458-5310ccd351c591da_fix732.png" alt="2228696458-5310ccd351c591da_fix732"></p>
+<p><img src="/../../images/2228696458-5310ccd351c591da_fix732-8097527.png" alt="2228696458-5310ccd351c591da_fix732"></p>
 <blockquote>
 <p>停止web1容器，模拟宕机。再次访问nginx服务，成功迁移到backup节点</p>
 </blockquote>
-<p><img src="/Users/houyuji/blog/source/_posts/103544577-7bfbcef4d16225dc_fix732.png" alt="103544577-7bfbcef4d16225dc_fix732"></p>
+<p><img src="/../../images/103544577-7bfbcef4d16225dc_fix732-8097540.png" alt="103544577-7bfbcef4d16225dc_fix732"></p>
 
       
     </div>
