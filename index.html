@@ -241,10 +241,10 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2021/08/05/hello-world/" class="title">Hello World</a>
+                <a href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" class="title">Docker+keepalived+nginx搭建高可用集群</a>
               </p>
               <p class="item-date">
-                <time datetime="2021-08-04T16:12:16.603Z" itemprop="datePublished">2021-08-05</time>
+                <time datetime="2021-08-04T16:30:30.000Z" itemprop="datePublished">2021-08-05</time>
               </p>
             </div>
           </li>
@@ -263,14 +263,14 @@
   
   
     <div class="content">
-  <article id="post-hello-world" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-Docker-keepalived-nginx搭建高可用集群" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/08/05/hello-world/">Hello World</a>
+      <a class="article-title" href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/">Docker+keepalived+nginx搭建高可用集群</a>
     </h1>
   
 
@@ -278,8 +278,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2021/08/05/hello-world/" class="article-date">
-	  <time datetime="2021-08-04T16:12:16.603Z" itemprop="datePublished">2021-08-05</time>
+	<a href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" class="article-date">
+	  <time datetime="2021-08-04T16:30:30.000Z" itemprop="datePublished">2021-08-05</time>
 	</a>
 </span>
         
@@ -287,25 +287,62 @@
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/08/05/hello-world/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/#comments" class="article-comment-link">Comments</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+        <h2 id="1-Docker环境来模拟多服务器环境"><a href="#1-Docker环境来模拟多服务器环境" class="headerlink" title="1.Docker环境来模拟多服务器环境"></a>1.Docker环境来模拟多服务器环境</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name web1 --privileged=true centos /usr/sbin/init</span><br><span class="line">docker exec -it web1 /bin/bash</span><br><span class="line">docker run -d --name web2 --privileged=true centos /usr/sbin/init</span><br><span class="line">docker exec -it web2 /bin/bash</span><br><span class="line">docker run -d --name webtest --privileged=true centos /usr/sbin/init</span><br><span class="line">docker exec -it webtest /bin/bash</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<ul>
+<li>–privileged=true：可以docker内真正拥有root权限</li>
+<li>/usr/sbin/init：可以在docker内使用systemctl命令</li>
+</ul>
+<h2 id="2-安装nginx、keepalived、vim、net-tools、initscripts"><a href="#2-安装nginx、keepalived、vim、net-tools、initscripts" class="headerlink" title="2.安装nginx、keepalived、vim、net-tools、initscripts"></a>2.安装nginx、keepalived、vim、net-tools、initscripts</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y nginx keepalived vim net-tools initscripts</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<ul>
+<li>initscripts：可以使用service命令</li>
+</ul>
+<h2 id="3-修改nginx默认html页面（方便查看主备切换）"><a href="#3-修改nginx默认html页面（方便查看主备切换）" class="headerlink" title="3.修改nginx默认html页面（方便查看主备切换）"></a>3.修改nginx默认html页面（方便查看主备切换）</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/share/nginx/html</span><br><span class="line">vim index.html</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p><img src="/Users/houyuji/blog/source/_posts/1269262184-c2b126fd67ce895d_fix732.png" alt="1269262184-c2b126fd67ce895d_fix732"></p>
+<p><img src="/Users/houyuji/blog/source/_posts/825873155-98546f3f4735f425_fix732.png" alt="825873155-98546f3f4735f425_fix732"></p>
+<h2 id="4-创建nginx进程检测脚本"><a href="#4-创建nginx进程检测脚本" class="headerlink" title="4.创建nginx进程检测脚本"></a>4.创建nginx进程检测脚本</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/keepalived</span><br><span class="line">touch check_nginx.sh</span><br><span class="line">chmod +x check_nginx.sh</span><br><span class="line">vim check_nginx.sh</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">A=`ps -C nginx --no-header | wc -l`</span><br><span class="line">if [ $A -eq 0 ];then</span><br><span class="line">    /usr/sbin/nginx</span><br><span class="line">    sleep 2</span><br><span class="line">    if [ `ps -C nginx --no-header | wc -l` -eq 0 ];then</span><br><span class="line">        killall keepalived</span><br><span class="line">    fi</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-配置keepalived"><a href="#5-配置keepalived" class="headerlink" title="5.配置keepalived"></a>5.配置keepalived</h2><blockquote>
+<p>master节点配置</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">   router_id LVS_DEVEL  #节点名，一般使用默认的就可以</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script chk_nginx &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nginx.sh&quot; #检测nginx脚本的路径</span><br><span class="line">    interval 2  #运行脚本的间隔时间</span><br><span class="line">    weight -20  #变更的权重</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state MASTER  #此节点为MASTER，如果此节点down掉，再重启时，会立即抢占回主节点</span><br><span class="line">    #mcast_src_ip 172.17.0.2  本机ip，不声明则默认绑定本机ip</span><br><span class="line">    interface eth0  #绑定的网卡，可以通过ifconfig查看网卡信息</span><br><span class="line">    virtual_router_id 70  #虚拟路由标识，同一组的必须相同</span><br><span class="line">    priority 100  #权重</span><br><span class="line">    nopreempt  #定义为非抢占式，因为多次主备切换对请求量大的服务器不太好</span><br><span class="line">    advert_int 1  #与组内其他节点发送心跳的间隔：s</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        172.17.0.200</span><br><span class="line">    &#125;  #绑定的虚拟ip组</span><br><span class="line">    track_script &#123;</span><br><span class="line">        chk_nginx</span><br><span class="line">    &#125;  #执行前面声明的脚本</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>backup节点配置</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">global_defs &#123;</span><br><span class="line">   router_id LVS_DEVEL  #节点名，一般使用默认的就可以</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_script chk_nginx &#123;</span><br><span class="line">    script &quot;/etc/keepalived/check_nginx.sh&quot; #检测nginx脚本的路径</span><br><span class="line">    interval 2  #运行脚本的间隔时间</span><br><span class="line">    weight -20  #变更的权重</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">vrrp_instance VI_1 &#123;</span><br><span class="line">    state BACKUP  #此节点为backup</span><br><span class="line">    # mcast_src_ip 172.17.0.3  本机ip，不声明则默认绑定本机ip</span><br><span class="line">    interface eth0  #绑定的网卡，可以通过ifconfig查看网卡信息</span><br><span class="line">    virtual_router_id 70  #虚拟路由标识，同一组的必须相同</span><br><span class="line">    priority 90  #权重，备节点的权重要比主节点小</span><br><span class="line">    advert_int 1  #与组内其他节点发送心跳的间隔：s。组内间隔必须相同</span><br><span class="line">    virtual_ipaddress &#123;</span><br><span class="line">        172.17.0.200</span><br><span class="line">    &#125;  #绑定的虚拟ip组</span><br><span class="line">    track_script &#123;</span><br><span class="line">        chk_nginx</span><br><span class="line">    &#125;  #执行前面声明的脚本</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-测试"><a href="#6-测试" class="headerlink" title="6.测试"></a>6.测试</h2><blockquote>
+<p>启动web1、web2内的nginx及keepalived服务</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nginx</span><br><span class="line">systemctl start keepalived</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查看虚拟ip是否绑定在master节点</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip a</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Users/houyuji/blog/source/_posts/2072617212-fbf4b38345f1e8fd_fix732.png" alt="2072617212-fbf4b38345f1e8fd_fix732"></p>
+<blockquote>
+<p>使用webtest容器作为客户端访问nginx服务</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 172.17.0.200</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Users/houyuji/blog/source/_posts/2228696458-5310ccd351c591da_fix732.png" alt="2228696458-5310ccd351c591da_fix732"></p>
+<blockquote>
+<p>停止web1容器，模拟宕机。再次访问nginx服务，成功迁移到backup节点</p>
+</blockquote>
+<p><img src="/Users/houyuji/blog/source/_posts/103544577-7bfbcef4d16225dc_fix732.png" alt="103544577-7bfbcef4d16225dc_fix732"></p>
 
       
     </div>
@@ -315,7 +352,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://example.com/2021/08/05/hello-world/" title="Hello World" target="_blank" rel="external">http://example.com/2021/08/05/hello-world/</a>
+      <a href="http://example.com/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" title="Docker+keepalived+nginx搭建高可用集群" target="_blank" rel="external">http://example.com/2021/08/05/Docker-keepalived-nginx搭建高可用集群/</a>
     </li>
     
     <li class="post-copyright-license">
