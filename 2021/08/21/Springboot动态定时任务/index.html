@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Springboot动态定时任务 | Aurora博客</title>
+  <meta name="description" content="项目上遇到用户动态调整定时任务执行时间的需求，一开始是使用数据库存储任务执行时间的方式，每次执行任务之前会从数据库中重新读取一次配置信息，从而更改下次执行时间。这样会有一个问题，比如任务是每天10:00执行，用户在11点更新下次执行时间，但实际第二天是未生效的，要在下一个执行周期才会生效，不符合需求。最后使用反射实现。  1.编写反射工具类123456789101112131415161718">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Springboot动态定时任务">
+<meta property="og:url" content="http://example.com/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/index.html">
+<meta property="og:site_name" content="Aurora博客">
+<meta property="og:description" content="项目上遇到用户动态调整定时任务执行时间的需求，一开始是使用数据库存储任务执行时间的方式，每次执行任务之前会从数据库中重新读取一次配置信息，从而更改下次执行时间。这样会有一个问题，比如任务是每天10:00执行，用户在11点更新下次执行时间，但实际第二天是未生效的，要在下一个执行周期才会生效，不符合需求。最后使用反射实现。  1.编写反射工具类123456789101112131415161718">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-21T15:51:03.000Z">
+<meta property="article:modified_time" content="2021-08-21T17:03:22.136Z">
+<meta property="article:author" content="Aurora">
+<meta property="article:tag" content="动态定时任务">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://example.com/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Aurora博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/877286291" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Aurora</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">随手记的，爱看不看</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 辽宁, 中国</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">分类</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/877286291" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/HA/">HA</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/springboot/">springboot</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">动态定时任务</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" rel="tag">高可用</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" style="font-size: 13px;">动态定时任务</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 13px;">高可用</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">八月 2021</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/springboot/">springboot</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" class="title">Springboot动态定时任务</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-21T15:51:03.000Z" itemprop="datePublished">2021-08-21</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/HA/">HA</a>
+              </p>
+              <p class="item-title">
+                <a href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" class="title">Docker+keepalived+nginx搭建高可用集群</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-04T16:30:30.000Z" itemprop="datePublished">2021-08-05</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-Springboot动态定时任务" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Springboot动态定时任务
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" class="article-date">
+	  <time datetime="2021-08-21T15:51:03.000Z" itemprop="datePublished">2021-08-21</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/springboot/">springboot</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" rel="tag">动态定时任务</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 1.3k(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 6(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <blockquote>
+<p> 项目上遇到用户动态调整定时任务执行时间的需求，一开始是使用数据库存储任务执行时间的方式，每次执行任务之前会从数据库中重新读取一次配置信息，从而更改下次执行时间。这样会有一个问题，比如任务是每天10:00执行，用户在11点更新下次执行时间，但实际第二天是未生效的，要在下一个执行周期才会生效，不符合需求。最后使用反射实现。</p>
+</blockquote>
+<h2 id="1-编写反射工具类"><a href="#1-编写反射工具类" class="headerlink" title="1.编写反射工具类"></a>1.编写反射工具类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanUtils</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Field <span class="title">findField</span><span class="params">(Class&lt;?&gt; clazz, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> clazz.getField(name);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldException ex) &#123;</span><br><span class="line">            <span class="keyword">return</span> findDeclaredField(clazz, name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Field <span class="title">findDeclaredField</span><span class="params">(Class&lt;?&gt; clazz, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> clazz.getDeclaredField(name);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchFieldException ex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (clazz.getSuperclass() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> findDeclaredField(clazz.getSuperclass(), name);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Method <span class="title">findMethod</span><span class="params">(Class&lt;?&gt; clazz, String methodName, Class&lt;?&gt;... paramTypes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> clazz.getMethod(methodName, paramTypes);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException ex) &#123;</span><br><span class="line">            <span class="keyword">return</span> findDeclaredMethod(clazz, methodName, paramTypes);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Method <span class="title">findDeclaredMethod</span><span class="params">(Class&lt;?&gt; clazz, String methodName, Class&lt;?&gt;... paramTypes)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> clazz.getDeclaredMethod(methodName, paramTypes);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException ex) &#123;</span><br><span class="line">            <span class="keyword">if</span> (clazz.getSuperclass() != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> findDeclaredMethod(clazz.getSuperclass(), methodName, paramTypes);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getProperty</span><span class="params">(Object obj, String name)</span> <span class="keyword">throws</span> NoSuchFieldException </span>&#123;</span><br><span class="line">        Object value;</span><br><span class="line">        Field field = findField(obj.getClass(), name);</span><br><span class="line">        <span class="keyword">if</span> (field == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchFieldException(<span class="string">&quot;no such field [&quot;</span> + name + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">boolean</span> accessible = field.isAccessible();</span><br><span class="line">        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            value = field.get(obj);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">        field.setAccessible(accessible);</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setProperty</span><span class="params">(Object obj, String name, Object value)</span> <span class="keyword">throws</span> NoSuchFieldException </span>&#123;</span><br><span class="line">        Field field = findField(obj.getClass(), name);</span><br><span class="line">        <span class="keyword">if</span> (field == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> NoSuchFieldException(<span class="string">&quot;no such field [&quot;</span> + name + <span class="string">&quot;]&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">boolean</span> accessible = field.isAccessible();</span><br><span class="line">        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            field.set(obj, value);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">        field.setAccessible(accessible);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, Object&gt; <span class="title">obj2Map</span><span class="params">(Object obj, Map&lt;String, Object&gt; map)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (map == <span class="keyword">null</span>) &#123;</span><br><span class="line">            map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (obj != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Class&lt;?&gt; clazz = obj.getClass();</span><br><span class="line">                <span class="keyword">do</span> &#123;</span><br><span class="line">                    Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">                    <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">                        <span class="keyword">int</span> mod = field.getModifiers();</span><br><span class="line">                        <span class="keyword">if</span> (Modifier.isStatic(mod)) &#123;</span><br><span class="line">                            <span class="keyword">continue</span>;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="keyword">boolean</span> accessible = field.isAccessible();</span><br><span class="line">                        field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">                        map.put(field.getName(), field.get(obj));</span><br><span class="line">                        field.setAccessible(accessible);</span><br><span class="line">                    &#125;</span><br><span class="line">                    clazz = clazz.getSuperclass();</span><br><span class="line">                &#125; <span class="keyword">while</span> (clazz != <span class="keyword">null</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> map;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获得父类集合，包含当前class</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> clazz</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> List&lt;Class&lt;?&gt;&gt; getSuperclassList(Class&lt;?&gt; clazz) &#123;</span><br><span class="line">        List&lt;Class&lt;?&gt;&gt; clazzes = <span class="keyword">new</span> ArrayList&lt;&gt;(<span class="number">3</span>);</span><br><span class="line">        clazzes.add(clazz);</span><br><span class="line">        clazz = clazz.getSuperclass();</span><br><span class="line">        <span class="keyword">while</span> (clazz != <span class="keyword">null</span>) &#123;</span><br><span class="line">            clazzes.add(clazz);</span><br><span class="line">            clazz = clazz.getSuperclass();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> Collections.unmodifiableList(clazzes);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-定时任务配置类"><a href="#2-定时任务配置类" class="headerlink" title="2.定时任务配置类"></a>2.定时任务配置类</h2><blockquote>
+<p>通过反射在程序运行时获取到定时任务对象，对其进行添加、删除、重置任务等操作。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CompleteScheduleConfig</span> <span class="keyword">implements</span> <span class="title">SchedulingConfigurer</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ScheduledTaskRegistrar taskRegistrar;</span><br><span class="line">    <span class="keyword">private</span> Set&lt;ScheduledFuture&lt;?&gt;&gt; scheduledFutures = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, ScheduledFuture&lt;?&gt;&gt; taskFutures = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureTasks</span><span class="params">(ScheduledTaskRegistrar taskRegistrar)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.taskRegistrar = taskRegistrar;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Set&lt;ScheduledFuture&lt;?&gt;&gt; getScheduledFutures() &#123;</span><br><span class="line">        <span class="keyword">if</span> (scheduledFutures == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// spring版本不同选用不同字段scheduledFutures</span></span><br><span class="line">                scheduledFutures = (Set&lt;ScheduledFuture&lt;?&gt;&gt;) BeanUtils.getProperty(taskRegistrar, <span class="string">&quot;scheduledTasks&quot;</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (NoSuchFieldException e) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> SchedulingException(<span class="string">&quot;not found scheduledFutures field.&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> scheduledFutures;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加任务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addTriggerTask</span><span class="params">(String taskId, TriggerTask triggerTask)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (taskFutures.containsKey(taskId)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> SchedulingException(<span class="string">&quot;the taskId[&quot;</span> + taskId + <span class="string">&quot;] was added.&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        TaskScheduler scheduler = taskRegistrar.getScheduler();</span><br><span class="line">        ScheduledFuture&lt;?&gt; future = scheduler.schedule(triggerTask.getRunnable(), triggerTask.getTrigger());</span><br><span class="line">        getScheduledFutures().add(future);</span><br><span class="line">        taskFutures.put(taskId, future);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取消任务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cancelTriggerTask</span><span class="params">(String taskId)</span> </span>&#123;</span><br><span class="line">        ScheduledFuture&lt;?&gt; future = taskFutures.get(taskId);</span><br><span class="line">        <span class="keyword">if</span> (future != <span class="keyword">null</span>) &#123;</span><br><span class="line">            future.cancel(<span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        taskFutures.remove(taskId);</span><br><span class="line">        getScheduledFutures().remove(future);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 重置任务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">resetTriggerTask</span><span class="params">(String taskId, TriggerTask triggerTask)</span> </span>&#123;</span><br><span class="line">        cancelTriggerTask(taskId);</span><br><span class="line">        addTriggerTask(taskId, triggerTask);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 任务编号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Set&lt;String&gt; <span class="title">taskIds</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> taskFutures.keySet();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 是否存在任务</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasTask</span><span class="params">(String taskId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.taskFutures.containsKey(taskId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 任务调度是否已经初始化完成</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">inited</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.taskRegistrar != <span class="keyword">null</span> &amp;&amp; <span class="keyword">this</span>.taskRegistrar.getScheduler() != <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-转换时间日期为cron表达式工具类"><a href="#3-转换时间日期为cron表达式工具类" class="headerlink" title="3.转换时间日期为cron表达式工具类"></a>3.转换时间日期为cron表达式工具类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CronUtils</span> </span>&#123;</span><br><span class="line">    <span class="comment">/***</span></span><br><span class="line"><span class="comment">     *  功能描述：日期转换cron表达式</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> date</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">formatDateByPattern</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;ss mm HH dd MM ?&quot;</span>);</span><br><span class="line">        String formatTimeStr = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (Objects.nonNull(date)) &#123;</span><br><span class="line">            formatTimeStr = sdf.format(date);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> formatTimeStr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">formatTimeByPattern</span><span class="params">(Time time)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;ss mm HH * * ?&quot;</span>);</span><br><span class="line">        String formatTimeStr = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (Objects.nonNull(time)) &#123;</span><br><span class="line">            formatTimeStr = sdf.format(time);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> formatTimeStr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-初始化定时任务"><a href="#4-初始化定时任务" class="headerlink" title="4.初始化定时任务"></a>4.初始化定时任务</h2><blockquote>
+<p>因为程序的定时任务信息是从数据库中获取的，所以我们要在springboot容器创建完成之后对定时任务进行初始化操作。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContextRefreshedListener</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ContextRefreshedEvent</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> CompleteScheduleConfig completeScheduleConfig;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AlarmService alarmService;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> AlarmConfMapper alarmConfMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ContextRefreshedListener</span><span class="params">(AlarmService alarmService, AlarmConfMapper alarmConfMapper, CompleteScheduleConfig completeScheduleConfig)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.alarmService = alarmService;</span><br><span class="line">        <span class="keyword">this</span>.alarmConfMapper = alarmConfMapper;</span><br><span class="line">        <span class="keyword">this</span>.completeScheduleConfig = completeScheduleConfig;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ContextRefreshedEvent event)</span> </span>&#123;</span><br><span class="line">        log.debug(<span class="string">&quot;初始化定时任务&quot;</span>);</span><br><span class="line">        Time time = alarmConfMapper.queryEmployeeCheckTime();</span><br><span class="line">        <span class="keyword">if</span> (ObjectUtils.isNotEmpty(time)) &#123;</span><br><span class="line">            completeScheduleConfig.addTriggerTask(<span class="string">&quot;employeeCountAlarm&quot;</span>, <span class="keyword">new</span> TriggerTask(</span><br><span class="line">                    alarmService::employeeCountAlarm,</span><br><span class="line">                    <span class="keyword">new</span> CronTrigger(CronUtils.formatTimeByPattern(time))));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-重置定时任务时间"><a href="#5-重置定时任务时间" class="headerlink" title="5.重置定时任务时间"></a>5.重置定时任务时间</h2><blockquote>
+<p>接收到用户更新的任务执行时间之后，对当前任务进行重置。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PutMapping(&quot;/conf/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> BaseResponse&lt;String&gt; <span class="title">updateAlarmConf</span><span class="params">(<span class="meta">@PathVariable</span> Integer id, <span class="meta">@RequestBody</span> AlarmConfDto alarmConfDto)</span> </span>&#123;</span><br><span class="line">        Boolean success = alarmService.updateAlarmConf(id, alarmConfDto);</span><br><span class="line">        <span class="keyword">if</span> (success) &#123;</span><br><span class="line">            Time time = alarmConfMapper.queryEmployeeCheckTime();</span><br><span class="line">            <span class="keyword">if</span> (ObjectUtils.isNotEmpty(time)) &#123;</span><br><span class="line">                completeScheduleConfig.resetTriggerTask(<span class="string">&quot;employeeCountAlarm&quot;</span>, <span class="keyword">new</span> TriggerTask(</span><br><span class="line">                        alarmService::employeeCountAlarm,</span><br><span class="line">                        <span class="keyword">new</span> CronTrigger(CronUtils.formatTimeByPattern(time))));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                completeScheduleConfig.cancelTriggerTask(<span class="string">&quot;employeeCountAlarm&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> BaseResponse.ok(<span class="string">&quot;告警规则修改成功&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> BaseResponse.ok(<span class="string">&quot;告警规则修改失败&quot;</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/08/21/Springboot%E5%8A%A8%E6%80%81%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1/" title="Springboot动态定时任务" target="_blank" rel="external">http://example.com/2021/08/21/Springboot动态定时任务/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/877286291" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/877286291" target="_blank"><span class="text-dark">Aurora</span><small class="ml-1x">随手记的，爱看不看</small></a></h3>
+        <div>这里介绍不了我。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2021/08/05/Docker-keepalived-nginx%E6%90%AD%E5%BB%BA%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4/" title="Docker+keepalived+nginx搭建高可用集群"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/877286291" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
