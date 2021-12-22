@@ -17,20 +17,21 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>关于 | Aurora博客</title>
-  <meta name="description" content="个人简介">
-<meta property="og:type" content="website">
-<meta property="og:title" content="关于">
-<meta property="og:url" content="http://example.com/about/index.html">
+  <title>SSH Socks5隧道代理 | Aurora博客</title>
+  <meta name="description" content="1ssh -D 1337 -f -C -q -N user@remote -p 2222    -D 表示本地端口转发，当监听到此端口有连接时，此连接中的数据将通过安全隧道转发到server端，目前支持socks4和socks5协议  -f请求ssh在工作在后台模式。该选项隐含了”-n”选项，所以标准输入将变为&#x2F;dev&#x2F;null  -C请求会话间的数据压缩传递。对于网络缓慢的主机，压缩对连接有所提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH Socks5隧道代理">
+<meta property="og:url" content="http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/index.html">
 <meta property="og:site_name" content="Aurora博客">
-<meta property="og:description" content="个人简介">
+<meta property="og:description" content="1ssh -D 1337 -f -C -q -N user@remote -p 2222    -D 表示本地端口转发，当监听到此端口有连接时，此连接中的数据将通过安全隧道转发到server端，目前支持socks4和socks5协议  -f请求ssh在工作在后台模式。该选项隐含了”-n”选项，所以标准输入将变为&#x2F;dev&#x2F;null  -C请求会话间的数据压缩传递。对于网络缓慢的主机，压缩对连接有所提">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-08-05T02:24:22.804Z">
-<meta property="article:modified_time" content="2021-08-05T02:24:22.804Z">
+<meta property="article:published_time" content="2021-12-22T07:03:31.000Z">
+<meta property="article:modified_time" content="2021-12-22T07:14:56.144Z">
 <meta property="article:author" content="Aurora">
+<meta property="article:tag" content="常见问题">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://example.com/about/index.html">
+  <link rel="canonical" href="http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Aurora博客" type="application/atom+xml">
   
@@ -316,124 +317,207 @@
 </aside>
 
   
-  <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    
-    <div class="widget">
-      <h3 class="widget-title">个人链接</h3>
-      <div class="widget-body">
-        <ul class="link-list lh-2x">
-          
-          <li>
-            Github:
-            
-              <a href="https://github.com/877286291" target="_blank">https://github.com/877286291</a>
-            
-          </li>
-          
-          <li>
-            Blog:
-            
-              <a href="http://houyuji.top" target="_blank">http://houyuji.top</a>
-            
-          </li>
-          
-        </ul>
-      </div>
-    </div>
-    
-    
-    <div class="widget">
-      <h3 class="widget-title">技能</h3>
-      <div class="widget-body">
-        <ul class="skill-list lh-2x">
-          
-          <li class="clearfix">
-            <span>Git</span>
-            <span class="pull-right">★★★☆☆</span>
-          </li>
-          
-          <li class="clearfix">
-            <span>Java</span>
-            <span class="pull-right">★★★☆☆</span>
-          </li>
-          
-          <li class="clearfix">
-            <span>Python</span>
-            <span class="pull-right">★★★★☆</span>
-          </li>
-          
-          <li class="clearfix">
-            <span>Golang</span>
-            <span class="pull-right">★★★★☆</span>
-          </li>
-          
-          <li class="clearfix">
-            <span>Vue</span>
-            <span class="pull-right">★★☆☆☆</span>
-          </li>
-          
-        </ul>
-      </div>
-    </div>
-    
-    
-    <div class="widget">
-      <h3 class="widget-title">个人标签</h3>
-      <div class="widget-body">
-        
-        <span class="label label-default mb">后端开发</span>
-        
-        <span class="label label-default mb">爬虫</span>
-        
-        <span class="label label-default mb">Web前端</span>
-        
-      </div>
-    </div>
-    
-    
-    
-    <div class="widget">
-      <h3 class="widget-title">个人项目</h3>
-      <div class="widget-body">
-        <ul class="project-list list-square lh-2x">
-          
-          <li class="public source">
-            <a href="https://github.com/877286291/go-watcher" target="_blank" title="877286291/go-watcher">
-              <span class="repo-icon octicon octicon-repo"></span>
-              <span class="repo-and-owner css-truncate-target">877286291/go-watcher</span>
-            </a>
-          </li>
-          
-          <li class="public source">
-            <a href="https://github.com/877286291/docker_manage_api" target="_blank" title="877286291/docker_manage_api">
-              <span class="repo-icon octicon octicon-repo"></span>
-              <span class="repo-and-owner css-truncate-target">877286291/docker_manage_api</span>
-            </a>
-          </li>
-          
-        </ul>
-      </div>
-    </div>
-    
-  </div>
-</aside>
-
+  
 <main class="main" role="main">
-  <article class="article archives-about article-type-normal" itemscope="">
-  <header class="article-header">
-    <h1 itemprop="title">关于</h1>
+  <div class="content">
+  <article id="post-SSH-Socks5隧道代理" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
-    <p class="text-muted">个人简介</p>
-    
-  </header>
-  <div class="article-body">
-    <p>个人详细介绍</p>
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      SSH Socks5隧道代理
+    </h1>
+  
 
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" class="article-date">
+	  <time datetime="2021-12-22T07:03:31.000Z" itemprop="datePublished">2021-12-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/util/">util</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/" rel="tag">常见问题</a>
+  </span>
+
+
+        
+
+	<span class="article-read hidden-xs">
+    	<i class="icon icon-eye-fill" aria-hidden="true"></i>
+    	<span id="/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" class="leancloud_visitors"  data-flag-title="SSH Socks5隧道代理">
+			<span class="leancloud-visitors-count">0</span>
+		</span>
+    </span>
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/#comments" class="article-comment-link">评论</a></span>
+        
+	
+		<span class="post-wordcount hidden-xs" itemprop="wordCount">字数统计: 209(字)</span>
+	
+	
+		<span class="post-readcount hidden-xs" itemprop="timeRequired">阅读时长: 1(分)</span>
+	
+
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -D 1337 -f -C -q -N user@remote -p 2222</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><kbd> -D </kbd>表示本地端口转发，当监听到此端口有连接时，此连接中的数据将通过安全隧道转发到server端，目前支持socks4和socks5协议</p>
+</li>
+<li><p><kbd>-f</kbd>请求ssh在工作在后台模式。该选项隐含了”-n”选项，所以标准输入将变为/dev/null</p>
+</li>
+<li><p><kbd>-C</kbd>请求会话间的数据压缩传递。对于网络缓慢的主机，压缩对连接有所提升。但对网络流畅的主机来说，压缩只会更糟糕</p>
+</li>
+<li><p><kbd>-q</kbd>静默模式。大多数警告信息将不输出</p>
+</li>
+<li><p><kbd>-N</kbd>明确表示不执行远程命令。仅作端口转发时比较有用</p>
+</li>
+<li><p><kbd>-p</kbd>指明端口号，如果是默认22端口，可以省略该参数</p>
+</li>
+</ul>
+<blockquote>
+<p>代理地址为socks5://127.0.0.1:1337</p>
+</blockquote>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/" title="SSH Socks5隧道代理" target="_blank" rel="external">http://example.com/2021/12/22/SSH-Socks5隧道代理/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/877286291" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/877286291" target="_blank"><span class="text-dark">Aurora</span><small class="ml-1x">随手记的，爱看不看</small></a></h3>
+        <div>这里介绍不了我。</div>
+      </div>
+    </figure>
   </div>
-</article>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
 
   
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2021/12/22/MAC%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%8D%A1%E6%AD%BB/" title="MAC配置静态IP卡死"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2021/08/22/MySQL8-0-MGR%E5%A4%9A%E4%B8%BB%E9%9B%86%E7%BE%A4/" title="MySQL8.0 MGR多主集群"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 </main>
@@ -488,6 +572,37 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 
 
 
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: ,
+    notify: ,
+    appId: 'FtLvXTVl7OibLxoBnb0nJ11S-gzGzoHsz',
+    appKey: 'U3JKmp03dS3ttiQtAjG7dSqh',
+    placeholder: '说点什么...',
+    avatar: 'wavatar',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: true
+  });
+  </script>
+
+     
 
 
 

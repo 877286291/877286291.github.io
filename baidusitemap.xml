@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://example.com/2021/12/22/MAC%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%8D%A1%E6%AD%BB/</loc>
+    <lastmod>2021-12-22</lastmod>
+  </url>
+  <url>
+    <loc>http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/</loc>
+    <lastmod>2021-12-22</lastmod>
+  </url>
+  <url>
     <loc>http://example.com/2021/08/22/MySQL8-0-MGR%E5%A4%9A%E4%B8%BB%E9%9B%86%E7%BE%A4/</loc>
     <lastmod>2021-08-22</lastmod>
   </url>

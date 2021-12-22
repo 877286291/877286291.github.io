@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-08-22T17:35:53.442Z</updated>
+  <updated>2021-12-22T07:19:28.194Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,55 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MAC配置静态IP卡死</title>
+    <link href="http://example.com/2021/12/22/MAC%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%8D%A1%E6%AD%BB/"/>
+    <id>http://example.com/2021/12/22/MAC%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81IP%E5%8D%A1%E6%AD%BB/</id>
+    <published>2021-12-22T07:13:47.000Z</published>
+    <updated>2021-12-22T07:19:28.194Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><blockquote><p>macos上打开网络偏好设置想要设置静态ip时,光标放到输入框内就出现卡死情况,导致无法对ip地址,子网掩码等进行修改</p></blockquote><h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 获取网络设备名称</span><br><span class="line">networksetup -listallnetworkservices</span><br><span class="line">// An asterisk (*) denotes that a network service is disabled.</span><br><span class="line">// Wi-Fi</span><br><span class="line">// USB 10/100/1000 LAN</span><br><span class="line">// iPhone USB</span><br><span class="line">// Thunderbolt Bridge</span><br><span class="line"></span><br><span class="line">// 设置静态ip: networksetup -setmanual 设备名称 ip 子网掩码 网关</span><br><span class="line">networksetup -setmanual &quot;USB 10/100/1000 LAN&quot; 192.168.0.150 255.255.255.0 192.168.0.1</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;问题描述&quot;&gt;&lt;a href=&quot;#问题描述&quot; class=&quot;headerlink&quot; title=&quot;问题描述&quot;&gt;&lt;/a&gt;问题描述&lt;/h1&gt;&lt;blockquote&gt;
+&lt;p&gt;macos上打开网络偏好设置想要设置静态ip时,光标放到输入框内就出现卡死情况,导致无法对ip地址</summary>
+      
+    
+    
+    
+    <category term="util" scheme="http://example.com/categories/util/"/>
+    
+    
+    <category term="常见问题" scheme="http://example.com/tags/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>SSH Socks5隧道代理</title>
+    <link href="http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/"/>
+    <id>http://example.com/2021/12/22/SSH-Socks5%E9%9A%A7%E9%81%93%E4%BB%A3%E7%90%86/</id>
+    <published>2021-12-22T07:03:31.000Z</published>
+    <updated>2021-12-22T07:14:56.144Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -D 1337 -f -C -q -N user@remote -p 2222</span><br></pre></td></tr></table></figure><ul><li><p><kbd> -D </kbd>表示本地端口转发，当监听到此端口有连接时，此连接中的数据将通过安全隧道转发到server端，目前支持socks4和socks5协议</p></li><li><p><kbd>-f</kbd>请求ssh在工作在后台模式。该选项隐含了”-n”选项，所以标准输入将变为/dev/null</p></li><li><p><kbd>-C</kbd>请求会话间的数据压缩传递。对于网络缓慢的主机，压缩对连接有所提升。但对网络流畅的主机来说，压缩只会更糟糕</p></li><li><p><kbd>-q</kbd>静默模式。大多数警告信息将不输出</p></li><li><p><kbd>-N</kbd>明确表示不执行远程命令。仅作端口转发时比较有用</p></li><li><p><kbd>-p</kbd>指明端口号，如果是默认22端口，可以省略该参数</p></li></ul><blockquote><p>代理地址为socks5://127.0.0.1:1337</p></blockquote>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span cla</summary>
+      
+    
+    
+    
+    <category term="util" scheme="http://example.com/categories/util/"/>
+    
+    
+    <category term="常见问题" scheme="http://example.com/tags/%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98/"/>
+    
+  </entry>
   
   <entry>
     <title>MySQL8.0 MGR多主集群</title>
