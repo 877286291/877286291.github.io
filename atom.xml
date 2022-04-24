@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-12-22T07:19:28.194Z</updated>
+  <updated>2022-04-24T08:45:36.702Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>protoc编译goalng踩坑</title>
+    <link href="http://example.com/2022/04/24/protoc%E7%BC%96%E8%AF%91goalng%E8%B8%A9%E5%9D%91/"/>
+    <id>http://example.com/2022/04/24/protoc%E7%BC%96%E8%AF%91goalng%E8%B8%A9%E5%9D%91/</id>
+    <published>2022-04-24T08:35:20.000Z</published>
+    <updated>2022-04-24T08:45:36.702Z</updated>
+    
+    <content type="html"><![CDATA[<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc -I. --go_out=. *.proto</span><br></pre></td></tr></table></figure><p>执行上述命令，期望在当前路径下生成响应的go文件，但是工具在当前路径自动创建了文件夹。</p><p><strong><code>--go_out</code> 参数的写法是，参数之间用逗号隔开，最后加上冒号来指定代码目录架构的生成位置，例如：<code>--go_out=plugins=grpc,paths=import:.</code></strong> 。<strong>paths 参数有两个选项，<code>import</code> 和 <code>source_relative</code> 。默认为 <code>import</code> ，代表按照生成的 go 代码的包的全路径去创建目录层级，<code>source_relative</code> 代表按照 proto 源文件的目录层级去创建 go 代码的目录层级，如果目录已存在则不用创建</strong>。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">protoc -I. --go_out=paths=source_relative:. *.proto</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span cla</summary>
+      
+    
+    
+    
+    
+    <category term="Protobuf" scheme="http://example.com/tags/Protobuf/"/>
+    
+  </entry>
   
   <entry>
     <title>MAC配置静态IP卡死</title>
