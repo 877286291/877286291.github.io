@@ -20,7 +20,18 @@ python main.py run      HTTP    tidevice wdaproxy → frpc → VPS:8100
 
 ## 快速开始
 
-### 1. iPhone 安装 WDA
+> **首次配置 WDA？** 请按 **[docs/wda-local-setup.md](docs/wda-local-setup.md)** 逐步操作（Mac + iPhone，不含外网）。
+
+```bash
+# Mac 上一键准备依赖并打开 Xcode
+chmod +x scripts/setup_wda.sh scripts/check_wda.sh
+./scripts/setup_wda.sh
+# … Xcode 签名 Run 完成后 …
+tidevice wdaproxy --port 8100
+./scripts/check_wda.sh
+```
+
+### 本地运行（WDA 就绪后）
 
 **Mac + Xcode**（推荐）：
 
@@ -55,25 +66,9 @@ python main.py run
 
 ---
 
-## 外网 frp 远程（Mac 在家）
+## 外网 frp 远程（可选，本地 WDA 跑通后再看）
 
-完整文档：**[docs/remote-frp-wda.md](docs/remote-frp-wda.md)**
-
-### 家里 Mac（iPhone USB 连接）
-
-```bash
-cp scripts/frpc.toml.example ~/frpc.toml   # 改成你的 VPS IP
-./scripts/home_wda_proxy.sh              # WDA + frpc 一起启动
-```
-
-### 外网任意电脑
-
-```bash
-python main.py --wda-url http://你的VPS_IP:8100 test
-python main.py --wda-url http://你的VPS_IP:8100 run
-```
-
-**优势**：外网脚本只连 WDA HTTP 接口，**不需要 SSH 进 Mac**，Mac 也**不需要图形界面**。
+详见 **[docs/remote-frp-wda.md](docs/remote-frp-wda.md)**
 
 ---
 
