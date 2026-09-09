@@ -1,5 +1,8 @@
 # 烟雨江湖 iOS 跑图脚本
 
+> **M 芯片 Mac 用户请优先使用 [`yanyu-jianghu-macos/`](../yanyu-jianghu-macos/)** — 直接在 Mac 上跑 iOS 版游戏，无需连接 iPhone，更简单。  
+> 下文适用于 **iPhone + 电脑 WDA** 方案。
+
 **专为 iPhone / iPad 设计**：游戏和账号始终在 **iOS 端**，不需要安卓、不跨服。
 
 通过 **WebDriverAgent (WDA)** + Python，在 Mac / Windows 电脑上控制 iPhone 完成资源跑图。
