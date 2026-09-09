@@ -1,6 +1,9 @@
-# 烟雨江湖 — M 芯片 Mac 跑图脚本
+# 烟雨江湖 — M 芯片 Mac 跑图脚本（pyautogui 本机方案）
 
-**最适合你的方案**：M1/M2/M3 Mac 直接运行 **iOS 版**《烟雨江湖》，脚本在本机用 Python 控制鼠标，**登录 iOS 主号**，无需 iPhone、无需 WDA、无需安卓。
+> **若需 WDA + frp 外网远程，请用 [`yanyu-jianghu-ios/`](../yanyu-jianghu-ios/)**（iPhone + WDA，更适合 Mac 在家、人在外的场景）。  
+> 本目录为 **Mac 本机 pyautogui** 方案，仅适合人在 Mac 前操作。
+
+M1/M2/M3 Mac 直接运行 iOS 版《烟雨江湖》，本机 Python 控制鼠标。
 
 ```
 M 芯片 Mac

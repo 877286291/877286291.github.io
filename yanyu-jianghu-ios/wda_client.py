@@ -30,7 +30,17 @@ class WdaClient:
         except ImportError as e:
             raise RuntimeError("请安装: pip install facebook-wda") from e
 
-        self._client = wda.Client(self.url)
+        log.info("正在连接 WDA: %s", self.url)
+        try:
+            self._client = wda.Client(self.url)
+            self._client.status(timeout=15)
+        except Exception as e:
+            raise RuntimeError(
+                f"无法连接 WDA ({self.url})。"
+                "家里 Mac 是否已运行 tidevice wdaproxy + frpc？"
+                "外网请确认 --wda-url 指向 VPS 转发地址。"
+            ) from e
+
         self._session = self._client.session()
         size = self._session.window_size()
         self.screen_w = int(size.width)

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import sys
 
 import config
@@ -70,7 +71,12 @@ def cmd_run(wda: WdaClient, skip_daxueshan: bool) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="烟雨江湖 iOS 跑图脚本 (WDA)")
-    parser.add_argument("--wda-url", default=config.WDA_URL, help="WDA 地址，默认 http://127.0.0.1:8100")
+    default_wda = os.environ.get("WDA_URL", config.WDA_URL)
+    parser.add_argument(
+        "--wda-url",
+        default=default_wda,
+        help="WDA 地址，默认 $WDA_URL 或 http://127.0.0.1:8100；外网 frp: http://VPS_IP:8100",
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("test", help="测试 OCR 位置识别")

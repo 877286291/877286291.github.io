@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.yanyu.wda-proxy</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/你的用户名/path/to/yanyu-jianghu-ios/scripts/home_wda_proxy.sh</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/你的用户名/.yanyu-wda-proxy/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/你的用户名/.yanyu-wda-proxy/launchd.err.log</string>
+</dict>
+</plist>
