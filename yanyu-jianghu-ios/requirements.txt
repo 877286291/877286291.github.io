@@ -1,0 +1,11 @@
+# iOS 跑图脚本依赖
+# Python 3.9+
+
+facebook-wda>=1.4.6
+Pillow>=10.0.0
+paddleocr>=2.7.0
+paddlepaddle>=2.5.0
+numpy>=1.24.0
+
+# 可选：无 Paddle 时降级使用 pytesseract
+# pytesseract>=0.3.10

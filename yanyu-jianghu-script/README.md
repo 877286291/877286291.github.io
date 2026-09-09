@@ -19,7 +19,9 @@
 | 权限 | 无障碍服务、截图权限 |
 | OCR | Auto.js Pro 内置 Paddle OCR，或安装 gmlkit OCR 插件 |
 
-> **iOS 用户请注意**：Auto.js 不支持 iPhone/iPad，本脚本无法直接在 iOS 上运行。请参阅下方 [iOS 用户方案](#ios-用户方案)。
+> **iOS 用户请注意**：Auto.js 不支持 iPhone/iPad，本脚本无法直接在 iOS 上运行。  
+> **请使用 [`yanyu-jianghu-ios/`](../yanyu-jianghu-ios/)** — 基于 WebDriverAgent 的 Python 版，可在 iOS 主号上跑图。  
+> 下文为 Android 版说明。
 
 ## 快速开始
 
