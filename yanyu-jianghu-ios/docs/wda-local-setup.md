@@ -173,3 +173,98 @@ chmod +x scripts/check_wda.sh
 ```
 
 完成后如需外网，再参考 [remote-frp-wda.md](remote-frp-wda.md)。
+
+---
+
+## 从 Python 虚拟环境开始（WDA 已跑通后）
+
+前提：另一个终端里 **WDA 已在运行**：
+
+```bash
+tidevice wdaproxy -B com.facebook.WebDriverAgentRunner.xctrunner --port 8100
+# 验证: curl http://127.0.0.1:8100/status
+```
+
+### 1. 进入项目目录
+
+```bash
+cd ~/path/to/yanyu-jianghu-ios
+# 若从 GitHub 拉取:
+# git clone https://github.com/877286291/877286291.github.io.git
+# cd 877286291.github.io/yanyu-jianghu-ios
+```
+
+### 2. 创建并激活虚拟环境
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+激活成功后，终端提示符前会出现 `(venv)`。
+
+> 以后每次新开终端都要先：`cd yanyu-jianghu-ios && source venv/bin/activate`
+
+### 3. 安装依赖
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+首次安装 PaddleOCR 会下载模型（约 100MB），需要几分钟。
+
+**M 芯片 Mac 若 paddlepaddle 安装失败**，可改用 EasyOCR：
+
+```bash
+pip install facebook-wda Pillow numpy easyocr
+```
+
+### 4. 检测 WDA 连通
+
+```bash
+chmod +x scripts/check_wda.sh
+./scripts/check_wda.sh
+```
+
+四项全 ✓ 再继续。
+
+### 5. iPhone 准备
+
+- 打开《烟雨江湖》→ 进入**地图界面**
+- **横屏**、**中视角**
+- 屏幕常亮（设置 → 自动锁定 → 暂时设「永不」）
+
+### 6. 运行脚本
+
+```bash
+# 测试 OCR 能否识别右上角城市/坐标
+python main.py test
+
+# 测试移动到指定坐标
+python main.py go 12 34
+
+# 完整资源跑图（默认跳过大雪山）
+python main.py run
+```
+
+### 7. 常用命令速查
+
+```bash
+source venv/bin/activate          # 激活环境
+deactivate                        # 退出环境
+python main.py test               # 测位置
+python main.py run                # 跑图
+python main.py run --include-daxueshan   # 含大雪山
+```
+
+### 依赖清单（requirements.txt）
+
+| 包 | 作用 |
+|----|------|
+| facebook-wda | 连接 WDA，截图、点击 |
+| Pillow | 图像处理 |
+| paddleocr | 识别城市名、坐标文字 |
+| paddlepaddle | PaddleOCR 后端 |
+| numpy | 数组运算 |
+
