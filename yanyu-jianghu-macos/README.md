@@ -63,6 +63,17 @@ python main.py run
 
 **紧急停止**：把鼠标快速移到屏幕**左上角**（pyautogui FAILSAFE）。
 
+## 外网远程跑图（frp / Tailscale）
+
+Mac 放在家里、人在外时，可通过 **frp** 转发 SSH，或 **Tailscale** 虚拟组网，SSH 回家触发跑图：
+
+```bash
+# 外网 SSH 到 Mac 后
+./scripts/remote_run.sh run
+```
+
+完整配置见 **[docs/remote-frp.md](docs/remote-frp.md)**（frps/frpc 配置、安全建议、防睡眠、VNC 可选）。
+
 ## 跑图路线
 
 34 个采集点环形路线，详见 `map_data.py`：
