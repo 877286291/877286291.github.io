@@ -1,0 +1,8 @@
+{
+  "name": "烟雨江湖跑图脚本",
+  "main": "main.js",
+  "ignore": ["README.md"],
+  "packageName": "com.yanyu.maprunner",
+  "versionName": "1.0.0",
+  "versionCode": 1
+}

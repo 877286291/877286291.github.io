@@ -1,0 +1,21 @@
+# frpc 配置示例 — 复制到 ~/frpc.toml 并修改
+
+serverAddr = "你的VPS公网IP"
+serverPort = 7000
+auth.token = "改成强随机密码"
+
+# 将家里 Mac 本机 WDA (8100) 暴露到 VPS 的 8100 端口
+[[proxies]]
+name = "wda"
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 8100
+remotePort = 8100
+
+# 更安全的 stcp 模式（不在 VPS 公开监听，见 docs/remote-frp-wda.md）
+# [[proxies]]
+# name = "wda-secret"
+# type = "stcp"
+# secretKey = "随机密钥"
+# localIP = "127.0.0.1"
+# localPort = 8100
