@@ -1,7 +1,8 @@
 #!/bin/bash
 # 在 Mac 上创建目录并拉取烟雨江湖 iOS 跑图项目
-# 用法: bash install-on-mac.sh
-# 或:   curl -fsSL .../install-on-mac.sh | bash
+# 用法:
+#   bash install-on-mac.sh
+#   bash install-on-mac.sh --mirror ghproxy   # GitHub 访问困难时
 
 set -euo pipefail
 
@@ -9,6 +10,19 @@ INSTALL_DIR="${INSTALL_DIR:-$HOME/Projects/yanyu-jianghu-ios}"
 REPO_URL="https://github.com/877286291/877286291.github.io.git"
 BRANCH="cursor/yanyu-jianghu-map-script-ec91"
 SUBDIR="yanyu-jianghu-ios"
+
+MIRROR=""
+if [[ "${1:-}" == "--mirror" && -n "${2:-}" ]]; then
+    MIRROR="$2"
+fi
+
+repo_url() {
+    case "$MIRROR" in
+        ghproxy) echo "https://ghproxy.net/${REPO_URL}" ;;
+        ghfast)  echo "https://ghfast.top/${REPO_URL}" ;;
+        *)       echo "$REPO_URL" ;;
+    esac
+}
 
 echo "=========================================="
 echo "  烟雨江湖 iOS 跑图 — 本地安装"
