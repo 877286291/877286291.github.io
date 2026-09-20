@@ -76,7 +76,7 @@ export async function getList(
   }
 
   const params: Record<string, string> = {
-    ac: "list",
+    ac: "videolist",
     pg: String(page),
   };
   if (typeId) params.t = String(typeId);
