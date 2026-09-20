@@ -90,12 +90,14 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <section>
-        <h1 className="mb-1 text-2xl font-bold text-white sm:text-3xl">
+        <h1 className="mb-1 text-xl font-bold text-white sm:text-2xl lg:text-3xl">
           欢迎，Aurora
         </h1>
-        <p className="text-[var(--muted)]">发现精彩影视内容</p>
+        <p className="text-sm text-[var(--muted)] sm:text-base">
+          发现精彩影视内容
+        </p>
       </section>
 
       <CategoryTabs
@@ -128,25 +130,31 @@ export default function HomePage() {
       )}
 
       {!loading && pagecount > 1 && (
-        <div className="flex items-center justify-center gap-4 pt-4">
-          <button
-            onClick={() => handlePageChange(page - 1)}
-            disabled={page <= 1}
-            className="rounded-md bg-[var(--card)] px-4 py-2 text-sm text-white disabled:opacity-40 hover:bg-[var(--card-hover)]"
-          >
-            上一页
-          </button>
-          <span className="text-sm text-[var(--muted)]">
+        <div className="flex flex-col items-stretch gap-3 pt-2 sm:flex-row sm:items-center sm:justify-center sm:gap-4 sm:pt-4">
+          <div className="flex items-center justify-center gap-2 sm:gap-4">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page <= 1}
+              className="min-h-11 flex-1 rounded-md bg-[var(--card)] px-4 py-2.5 text-sm text-white disabled:opacity-40 hover:bg-[var(--card-hover)] sm:min-h-0 sm:flex-none sm:py-2"
+            >
+              上一页
+            </button>
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page >= pagecount}
+              className="min-h-11 flex-1 rounded-md bg-[var(--card)] px-4 py-2.5 text-sm text-white disabled:opacity-40 hover:bg-[var(--card-hover)] sm:min-h-0 sm:flex-none sm:py-2"
+            >
+              下一页
+            </button>
+          </div>
+          <span className="text-center text-xs text-[var(--muted)] sm:text-sm">
             第 {page} / {pagecount} 页
-            {total > 0 && ` · 共 ${total.toLocaleString()} 部`}
+            {total > 0 && (
+              <span className="hidden sm:inline">
+                {` · 共 ${total.toLocaleString()} 部`}
+              </span>
+            )}
           </span>
-          <button
-            onClick={() => handlePageChange(page + 1)}
-            disabled={page >= pagecount}
-            className="rounded-md bg-[var(--card)] px-4 py-2 text-sm text-white disabled:opacity-40 hover:bg-[var(--card-hover)]"
-          >
-            下一页
-          </button>
         </div>
       )}
     </div>

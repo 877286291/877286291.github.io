@@ -16,10 +16,10 @@ export default function CategoryTabs({
   const topCategories = categories.filter((c) => c.type_pid === 0);
 
   return (
-    <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-2">
+    <div className="scrollbar-hide touch-scroll-x -mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:-mx-0 sm:px-0">
       <button
         onClick={() => onChange(null)}
-        className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+        className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition sm:py-1.5 ${
           activeId === null
             ? "bg-[var(--accent)] text-white"
             : "bg-[var(--card)] text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-white"
@@ -31,7 +31,7 @@ export default function CategoryTabs({
         <button
           key={cat.type_id}
           onClick={() => onChange(cat.type_id)}
-          className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
+          className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition sm:py-1.5 ${
             activeId === cat.type_id
               ? "bg-[var(--accent)] text-white"
               : "bg-[var(--card)] text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-white"

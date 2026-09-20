@@ -51,19 +51,19 @@ export default function VideoPlayer({ src, title }: VideoPlayerProps) {
 
   if (!src) {
     return (
-      <div className="flex aspect-video items-center justify-center rounded-lg bg-black text-[var(--muted)]">
+      <div className="flex aspect-video w-full items-center justify-center bg-black text-sm text-[var(--muted)] sm:rounded-lg">
         请选择剧集开始播放
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg bg-black">
+    <div className="relative aspect-video w-full overflow-hidden bg-black sm:rounded-lg">
       <video
         ref={videoRef}
         controls
         playsInline
-        className="aspect-video w-full"
+        className="absolute inset-0 h-full w-full object-contain"
         title={title}
       />
     </div>

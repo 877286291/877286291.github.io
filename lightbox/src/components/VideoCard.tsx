@@ -13,7 +13,7 @@ export default function VideoCard({ item }: VideoCardProps) {
   return (
     <Link
       href={`/detail/${item.vod_id}`}
-      className="group block overflow-hidden rounded-lg bg-[var(--card)] transition hover:bg-[var(--card-hover)] hover:ring-1 hover:ring-[var(--accent)]/50"
+      className="group block overflow-hidden rounded-md bg-[var(--card)] transition hover:bg-[var(--card-hover)] hover:ring-1 hover:ring-[var(--accent)]/50 sm:rounded-lg"
     >
       <div className="relative aspect-[2/3] overflow-hidden bg-[var(--border)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,16 +28,18 @@ export default function VideoCard({ item }: VideoCardProps) {
           }}
         />
         {item.vod_remarks && (
-          <span className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-0.5 text-xs text-white">
+          <span className="absolute bottom-1.5 right-1.5 rounded bg-black/70 px-1.5 py-0.5 text-[10px] text-white sm:bottom-2 sm:right-2 sm:px-2 sm:text-xs">
             {item.vod_remarks}
           </span>
         )}
       </div>
-      <div className="p-3">
-        <h3 className="line-clamp-2 text-sm font-medium text-white group-hover:text-[var(--accent)]">
+      <div className="p-2 sm:p-3">
+        <h3 className="line-clamp-2 text-xs font-medium text-white group-hover:text-[var(--accent)] sm:text-sm">
           {item.vod_name}
         </h3>
-        <p className="mt-1 text-xs text-[var(--muted)]">{item.type_name}</p>
+        <p className="mt-0.5 text-[10px] text-[var(--muted)] sm:mt-1 sm:text-xs">
+          {item.type_name}
+        </p>
       </div>
     </Link>
   );

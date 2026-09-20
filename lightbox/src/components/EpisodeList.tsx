@@ -38,7 +38,7 @@ export default function EpisodeList({
               <button
                 key={s.source}
                 onClick={() => onSourceChange(s.source)}
-                className={`rounded-md px-3 py-1.5 text-sm transition ${
+                className={`min-h-10 rounded-md px-3 py-2 text-sm transition sm:min-h-0 sm:py-1.5 ${
                   activeSource === s.source
                     ? "bg-[var(--accent)] text-white"
                     : "bg-[var(--card)] text-[var(--muted)] hover:text-white"
@@ -56,12 +56,12 @@ export default function EpisodeList({
         <h3 className="mb-2 text-sm font-medium text-[var(--muted)]">
           选集 ({currentSource.episodes.length})
         </h3>
-        <div className="grid max-h-64 grid-cols-4 gap-2 overflow-y-auto sm:grid-cols-6 md:grid-cols-8">
+        <div className="grid max-h-64 grid-cols-3 gap-2 overflow-y-auto sm:max-h-72 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
           {currentSource.episodes.map((ep: Episode, idx: number) => (
             <button
               key={`${ep.title}-${idx}`}
               onClick={() => onEpisodeChange(idx)}
-              className={`rounded-md px-2 py-2 text-xs transition ${
+              className={`min-h-10 rounded-md px-2 py-2.5 text-xs transition sm:min-h-0 sm:py-2 ${
                 activeEpisode === idx
                   ? "bg-[var(--accent)] text-white"
                   : "bg-[var(--card)] text-[var(--muted)] hover:bg-[var(--card-hover)] hover:text-white"

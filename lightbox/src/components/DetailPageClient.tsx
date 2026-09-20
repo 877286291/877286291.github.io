@@ -105,7 +105,7 @@ export default function DetailPageClient({ id }: DetailPageClientProps) {
     "暂无简介";
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <Link
         href="/"
         className="inline-flex items-center text-sm text-[var(--muted)] hover:text-white"
@@ -113,8 +113,8 @@ export default function DetailPageClient({ id }: DetailPageClientProps) {
         ← 返回首页
       </Link>
 
-      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-        <div className="mx-auto w-full max-w-[280px] shrink-0">
+      <div className="flex flex-col items-center gap-6 sm:gap-8 lg:grid lg:grid-cols-[240px_1fr] lg:items-start xl:grid-cols-[280px_1fr]">
+        <div className="w-full max-w-[180px] shrink-0 sm:max-w-[220px] lg:max-w-none lg:w-auto">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={
@@ -126,12 +126,12 @@ export default function DetailPageClient({ id }: DetailPageClientProps) {
           />
         </div>
 
-        <div className="space-y-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+        <div className="w-full space-y-3 sm:space-y-4 lg:w-auto">
+          <div className="text-center lg:text-left">
+            <h1 className="text-xl font-bold text-white sm:text-2xl lg:text-3xl">
               {detail.vod_name}
             </h1>
-            <div className="mt-2 flex flex-wrap gap-2 text-sm text-[var(--muted)]">
+            <div className="mt-2 flex flex-wrap justify-center gap-2 text-sm text-[var(--muted)] lg:justify-start">
               {detail.type_name && (
                 <span className="rounded bg-[var(--card)] px-2 py-0.5">
                   {detail.type_name}
@@ -170,10 +170,12 @@ export default function DetailPageClient({ id }: DetailPageClientProps) {
         </div>
       </div>
 
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">正在播放</h2>
+      <section className="-mx-4 space-y-3 sm:mx-0 sm:space-y-4">
+        <h2 className="px-4 text-base font-semibold text-white sm:px-0 sm:text-lg">
+          正在播放
+        </h2>
         {playLoading ? (
-          <div className="flex aspect-video items-center justify-center rounded-lg bg-black">
+          <div className="flex aspect-video items-center justify-center bg-black sm:rounded-lg">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--accent)] border-t-transparent" />
           </div>
         ) : (
