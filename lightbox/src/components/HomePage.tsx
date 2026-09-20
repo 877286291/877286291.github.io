@@ -11,6 +11,7 @@ export default function HomePage() {
   const [items, setItems] = useState<VodListItem[]>([]);
   const [page, setPage] = useState(1);
   const [pagecount, setPagecount] = useState(1);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +37,7 @@ export default function HomePage() {
       if (data.error) throw new Error(data.error);
       setItems(data.list || []);
       setPagecount(data.pagecount || 1);
+      setTotal(data.total || 0);
       setPage(data.page || pg);
     } catch (err) {
       setError(err instanceof Error ? err.message : "加载列表失败");
@@ -103,6 +105,7 @@ export default function HomePage() {
           </button>
           <span className="text-sm text-[var(--muted)]">
             第 {page} / {pagecount} 页
+            {total > 0 && ` · 共 ${total.toLocaleString()} 部`}
           </span>
           <button
             onClick={() => handlePageChange(page + 1)}

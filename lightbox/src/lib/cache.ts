@@ -8,7 +8,15 @@ interface CacheEntry<T> {
 const TTL_MS = 10 * 60 * 1000;
 
 const categoriesCache = new Map<string, CacheEntry<Category[]>>();
-const listCache = new Map<string, CacheEntry<VodListItem[]>>();
+
+export interface ListCacheData {
+  list: VodListItem[];
+  page: number;
+  pagecount: number;
+  total: number;
+}
+
+const listCache = new Map<string, CacheEntry<ListCacheData>>();
 const searchIndex = new Map<number, VodListItem>();
 
 function getCached<T>(map: Map<string, CacheEntry<T>>, key: string): T | null {
@@ -33,13 +41,13 @@ export function setCachedCategories(key: string, data: Category[]): void {
   setCached(categoriesCache, key, data);
 }
 
-export function getCachedList(key: string): VodListItem[] | null {
+export function getCachedList(key: string): ListCacheData | null {
   return getCached(listCache, key);
 }
 
-export function setCachedList(key: string, data: VodListItem[]): void {
+export function setCachedList(key: string, data: ListCacheData): void {
   setCached(listCache, key, data);
-  for (const item of data) {
+  for (const item of data.list) {
     searchIndex.set(item.vod_id, item);
   }
 }
@@ -50,16 +58,26 @@ export function indexVodItems(items: VodListItem[]): void {
   }
 }
 
+export function matchesQuery(item: VodListItem, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return false;
+
+  const fields = [
+    item.vod_name,
+    item.vod_actor,
+    item.type_name,
+    item.vod_blurb,
+  ];
+  return fields.some((field) => field?.toLowerCase().includes(q));
+}
+
 export function searchLocal(query: string, limit = 50): VodListItem[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
   const results: VodListItem[] = [];
   for (const item of Array.from(searchIndex.values())) {
-    const name = item.vod_name?.toLowerCase() || "";
-    const actor = item.vod_actor?.toLowerCase() || "";
-    const type = item.type_name?.toLowerCase() || "";
-    if (name.includes(q) || actor.includes(q) || type.includes(q)) {
+    if (matchesQuery(item, q)) {
       results.push(item);
       if (results.length >= limit) break;
     }

@@ -3,6 +3,7 @@ import {
   getCachedCategories,
   getCachedList,
   indexVodItems,
+  matchesQuery,
   searchLocal,
   setCachedCategories,
   setCachedList,
@@ -72,7 +73,12 @@ export async function getList(
   const cacheKey = `list:${typeId ?? "all"}:${page}`;
   const cached = getCachedList(cacheKey);
   if (cached) {
-    return { list: cached, page, pagecount: 0, total: cached.length };
+    return {
+      list: cached.list,
+      page: cached.page,
+      pagecount: cached.pagecount,
+      total: cached.total,
+    };
   }
 
   const params: Record<string, string> = {
@@ -83,14 +89,15 @@ export async function getList(
 
   const data = await fetchMaotai<ListResponse>(params);
   const list = data.list || [];
-  setCachedList(cacheKey, list);
-
-  return {
+  const payload = {
     list,
     page: data.page,
     pagecount: data.pagecount,
     total: data.total,
   };
+  setCachedList(cacheKey, payload);
+
+  return payload;
 }
 
 export async function getDetail(id: number): Promise<VodDetail | null> {
@@ -108,20 +115,74 @@ export async function getDetail(id: number): Promise<VodDetail | null> {
   return detail;
 }
 
-export async function searchVods(query: string): Promise<VodListItem[]> {
-  let results = searchLocal(query);
+export async function searchVods(
+  query: string,
+  options?: { startPage?: number; maxPages?: number; limit?: number }
+): Promise<{
+  results: VodListItem[];
+  scannedFrom: number;
+  scannedTo: number;
+  hasMore: boolean;
+}> {
+  const q = query.trim();
+  const startPage = Math.max(1, options?.startPage ?? 1);
+  const maxPages = Math.min(50, options?.maxPages ?? 15);
+  const limit = options?.limit ?? 50;
 
-  if (results.length < 10 && query.trim()) {
-    for (let page = 1; page <= 3; page++) {
-      try {
-        const { list } = await getList(page);
-        indexVodItems(list);
-      } catch {
-        break;
-      }
-    }
-    results = searchLocal(query);
+  if (!q) {
+    return { results: [], scannedFrom: 0, scannedTo: 0, hasMore: false };
   }
 
-  return results;
+  const results: VodListItem[] = [];
+  const seen = new Set<number>();
+
+  if (startPage === 1) {
+    for (const item of searchLocal(q, limit)) {
+      results.push(item);
+      seen.add(item.vod_id);
+    }
+    if (results.length >= limit) {
+      return {
+        results,
+        scannedFrom: 1,
+        scannedTo: 0,
+        hasMore: true,
+      };
+    }
+  }
+
+  let scannedTo = startPage - 1;
+  let pagecount = 1;
+  let hasMore = false;
+
+  for (let page = startPage; page < startPage + maxPages; page++) {
+    try {
+      const data = await getList(page);
+      pagecount = data.pagecount;
+      scannedTo = page;
+      indexVodItems(data.list);
+
+      for (const item of data.list) {
+        if (seen.has(item.vod_id)) continue;
+        if (matchesQuery(item, q)) {
+          results.push(item);
+          seen.add(item.vod_id);
+          if (results.length >= limit) break;
+        }
+      }
+
+      if (results.length >= limit || page >= pagecount) break;
+    } catch {
+      break;
+    }
+  }
+
+  hasMore = scannedTo < pagecount;
+
+  return {
+    results,
+    scannedFrom: startPage,
+    scannedTo,
+    hasMore,
+  };
 }
