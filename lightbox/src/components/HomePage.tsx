@@ -2,11 +2,29 @@
 
 import { useCallback, useEffect, useState } from "react";
 import CategoryTabs from "@/components/CategoryTabs";
+import SubCategoryTabs from "@/components/SubCategoryTabs";
 import VideoGrid from "@/components/VideoGrid";
 import type { Category, VodListItem } from "@/lib/types";
 
+function getChildCategories(categories: Category[], parentId: number) {
+  return categories.filter((c) => c.type_pid === parentId);
+}
+
+function resolveTypeId(
+  categories: Category[],
+  parentId: number | null
+): number | null {
+  if (parentId === null) return null;
+
+  const children = getChildCategories(categories, parentId);
+  if (children.length > 0) return children[0].type_id;
+
+  return parentId;
+}
+
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [activeParentId, setActiveParentId] = useState<number | null>(null);
   const [activeTypeId, setActiveTypeId] = useState<number | null>(null);
   const [items, setItems] = useState<VodListItem[]>([]);
   const [page, setPage] = useState(1);
@@ -54,7 +72,13 @@ export default function HomePage() {
     fetchList(1, activeTypeId);
   }, [activeTypeId, fetchList]);
 
-  const handleCategoryChange = (typeId: number | null) => {
+  const handleCategoryChange = (parentId: number | null) => {
+    setActiveParentId(parentId);
+    setActiveTypeId(resolveTypeId(categories, parentId));
+    setPage(1);
+  };
+
+  const handleSubCategoryChange = (typeId: number) => {
     setActiveTypeId(typeId);
     setPage(1);
   };
@@ -76,9 +100,18 @@ export default function HomePage() {
 
       <CategoryTabs
         categories={categories}
-        activeId={activeTypeId}
+        activeId={activeParentId}
         onChange={handleCategoryChange}
       />
+
+      {activeParentId !== null && (
+        <SubCategoryTabs
+          categories={categories}
+          parentId={activeParentId}
+          activeId={activeTypeId ?? 0}
+          onChange={handleSubCategoryChange}
+        />
+      )}
 
       {error && (
         <div className="rounded-lg border border-red-900/50 bg-red-950/30 px-4 py-3 text-red-300">
